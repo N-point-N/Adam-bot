@@ -25,28 +25,36 @@ def print_commandslist(message):
 @bot.message_handler(commands=['getWeather', 'getweather', 'weather'])
 def get_weather(message):
     bot.send_message(message.chat.id, "Enter taget location")
+    global weather_c
+    #print(weather_c)
     weather_c = True
-    g = lambda flag: flag
-    print(g(weather_c))
 
 
-@bot.message_handler(func=(lambda flag: flag)(weather_c), content_types=["location"])
+@bot.message_handler(func=(lambda _ : weather_c), content_types=["location"])
 def repeat_all_messages(message):
+    template_en =['City: ','Current weather: ','temperature: ','min.: ','max.: ','pressure: ','wind: ', 'sunrise: ','sunset: ']
+    template_ru = ['Город: ','Текущая погода: ','температура: ','мин.:  ','макс.: ','давление: ','ветер: ','восход: ','закат: ']
+    template_dim_ru = [' мм',' м/с']
+    template_dim_en =[' mm',' m/sec']
+    print('Checked')
     obs = owm.weather_at_coords(message.location.latitude, message.location.longitude)
     w = obs.get_weather()
     print("Checked")
     temp = w.get_temperature(unit='celsius')
-    text_en = 'City: ' + obs.get_location().get_name() + '\n' \
-              + 'Current weather:\n' \
+    template = template_ru
+    template_dim = template_dim_ru
+    text = template[0] + obs.get_location().get_name() + '\n' \
+              + template[1] +'\n' \
               + w.get_detailed_status() + '\n' \
-              + 'temperature: ' + str(temp['temp']) + unicode(' °C', 'utf-8') + '\n' \
-              + 'min: ' + str(temp['temp_min']) + unicode(' °C', 'utf-8') + '\n' \
-              + 'max: ' + str(temp['temp_max']) + unicode(' °C', 'utf-8') + '\n' \
-              + 'pressure: ' + str(w.get_pressure()['press']) + ' mm\n' \
-              + 'wind: ' + str(w.get_wind()['speed']) + 'm/sec\n' \
-              + 'sunrise: ' + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
-              + 'sunset: ' + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
-    bot.send_message(message.chat.id, text_en)
+              + template[2] + str(temp['temp']) + " °C" + '\n' \
+              + template[3] + str(temp['temp_min']) + " °C" + '\n' \
+              + template[4] + str(temp['temp_max']) + " °C" + '\n' \
+              + template[5] + str(w.get_pressure()['press']) + template_dim[0]+'\n' \
+              + template[6] + str(w.get_wind()['speed']) + template_dim[1] +'\n' \
+              + template[7] + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
+              + template[8] + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
+    bot.send_message(message.chat.id, text)
+    global weather_c
     weather_c = False
 
 
