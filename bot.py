@@ -75,8 +75,5 @@ def repeat_sticker(message):
 #     bot.send_message(message.chat.id, str(message.location.latitude) + " "+str(message.location.longitude))
 
 if __name__ == '__main__':
-    try:
-        bot.polling(none_stop=True)
-    except Exception as err:
-        logging.error(err)
-        print("Internet error")
+    bot.polling(none_stop=True)
+
