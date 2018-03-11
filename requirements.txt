@@ -2,7 +2,6 @@ certifi==2018.1.18
 chardet==3.0.4
 DateTime==4.2
 idna==2.6
-logging==0.4.9.6
 pkg-resources==0.0.0
 pyowm==2.8.0
 pyTelegramBotAPI==3.6.1
