@@ -32,8 +32,8 @@ def get_weather(message):
 
 @bot.message_handler(func=(lambda _ : weather_c), content_types=["location"])
 def repeat_all_messages(message):
-    template_en =['City: ','Current weather: ','temperature: ','min.: ','max.: ','pressure: ','wind: ', 'sunrise: ','sunset: ']
-    template_ru = ['Город: ','Текущая погода: ','температура: ','мин.:  ','макс.: ','давление: ','ветер: ','восход: ','закат: ']
+    template_en =['City: ','Current weather: ','temperature: ','pressure: ','wind: ', 'sunrise: ','sunset: ']
+    template_ru = ['Город: ','Текущая погода: ','температура: ','давление: ','ветер: ','восход: ','закат: ']
     template_dim_ru = [' мм',' м/с']
     template_dim_en =[' mm',' m/sec']
     print('Checked')
@@ -47,9 +47,7 @@ def repeat_all_messages(message):
               + template[1] +'\n' \
               + w.get_detailed_status() + '\n' \
               + template[2] + str(temp['temp']) + " °C" + '\n' \
-              + template[3] + str(temp['temp_min']) + " °C" + '\n' \
-              + template[4] + str(temp['temp_max']) + " °C" + '\n' \
-              + template[5] + str(w.get_pressure()['press']) + template_dim[0]+'\n' \
+              + template[5] + str(w.get_pressure()['press']/133.3224) + template_dim[0]+'\n' \
               + template[6] + str(w.get_wind()['speed']) + template_dim[1] +'\n' \
               + template[7] + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
               + template[8] + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
