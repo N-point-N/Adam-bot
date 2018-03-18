@@ -47,10 +47,10 @@ def repeat_all_messages(message):
               + template[1] +'\n' \
               + w.get_detailed_status() + '\n' \
               + template[2] + str(temp['temp']) + " °C" + '\n' \
-              + template[5] + str(w.get_pressure()['press']/133.3224) + template_dim[0]+'\n' \
-              + template[6] + str(w.get_wind()['speed']) + template_dim[1] +'\n' \
-              + template[7] + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
-              + template[8] + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
+              + template[3] + str(round(w.get_pressure()['press']/1.333224)) + template_dim[0]+'\n' \
+              + template[4] + str(w.get_wind()['speed']) + template_dim[1] +'\n' \
+              + template[5] + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
+              + template[6] + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
     bot.send_message(message.chat.id, text)
     global weather_c
     weather_c = False
