@@ -3,6 +3,8 @@ import config
 import telebot
 import logging
 from datetime import datetime
+from pytz import timezone
+from timezonefinder import  TimezoneFinder
 from pyowm import OWM
 
 bot = telebot.TeleBot(config.telegramToken)
@@ -26,7 +28,6 @@ def print_commandslist(message):
 def get_weather(message):
     bot.send_message(message.chat.id, "Enter taget location")
     global weather_c
-    #print(weather_c)
     weather_c = True
 
 
@@ -36,10 +37,12 @@ def repeat_all_messages(message):
     template_ru = ['Город: ','Текущая погода: ','температура: ','давление: ','ветер: ','восход: ','закат: ']
     template_dim_ru = [' мм',' м/с']
     template_dim_en =[' mm',' m/sec']
-    print('Checked')
+    tf = TimezoneFinder()
+    tt =timezone(tf.timezone_at(lng=message.location.longitude,lat=message.location.latitude))
     obs = owm.weather_at_coords(message.location.latitude, message.location.longitude)
     w = obs.get_weather()
-    print("Checked")
+    sunrize = datetime.fromtimestamp(w.get_sunrise_time()).astimezone(tt)
+    sunzet = datetime.fromtimestamp(w.get_sunset_time()).astimezone(tt)
     temp = w.get_temperature(unit='celsius')
     template = template_ru
     template_dim = template_dim_ru
@@ -49,8 +52,8 @@ def repeat_all_messages(message):
               + template[2] + str(temp['temp']) + " °C" + '\n' \
               + template[3] + str(round(w.get_pressure()['press']/1.333224)) + template_dim[0]+'\n' \
               + template[4] + str(w.get_wind()['speed']) + template_dim[1] +'\n' \
-              + template[5] + datetime.fromtimestamp(w.get_sunrise_time()).strftime('%H:%M:%S') + '\n' \
-              + template[6] + datetime.fromtimestamp(w.get_sunset_time()).strftime('%H:%M:%S')
+              + template[5] + sunrize.strftime('%H:%M:%S') + '\n' \
+              + template[6] + sunzet.strftime('%H:%M:%S')
     bot.send_message(message.chat.id, text)
     global weather_c
     weather_c = False
@@ -62,15 +65,6 @@ def repeat_sticker(message):
     for i in range(10) if len(stickers.stickers) > 10 else range(len(stickers.stickers)):
         bot.send_sticker(message.chat.id, stickers.stickers[i].file_id)
 
-
-# @bot.message_handler(content_types=['venue'])
-# def get_venue(message):
-#     print('Venue carried')
-#     bot.send_message(message.chat.id, message.venue.address)
-# @bot.message_handler(content_types=['location'])
-# def get_location(message):
-#     print(message.location.latitude)
-#     bot.send_message(message.chat.id, str(message.location.latitude) + " "+str(message.location.longitude))
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
