@@ -39,7 +39,7 @@ def get_weather(message):
     lc_btn = telebot.types.KeyboardButton(text=text_btn, request_location=True)
     lc_krd = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     lc_krd.add(lc_btn)
-    bot.send_message(message.chat.id, text, reply_markup=lc_krd)
+    bot.send_message(message.chat.id, text, reply_markup=lc_krd).message_id
 
 
 @bot.message_handler(func=(lambda _: weather_c), content_types=["location"])
@@ -68,7 +68,8 @@ def repeat_all_messages(message):
                  + template_short[1] + str(w.get_temperature(unit='celsius')['temp']) + "°C" + '\n' \
                  + template_short[2] + str(w.get_clouds()) + ' %\n' \
                  + template_short[3] + str(w.get_wind()['speed']) + template_dim[1] + '\n'
-    bot.send_message(message.chat.id, '.', reply_markup=telebot.types.ReplyKeyboardRemove(True))
+    loc_id = bot.send_message(message.chat.id, '.', reply_markup=telebot.types.ReplyKeyboardRemove(True)).message_id
+    bot.delete_message(message.chat.id, loc_id)
     full_key = telebot.types.InlineKeyboardButton(text=btn_text, callback_data='full_data')
     full_kwd = telebot.types.InlineKeyboardMarkup()
     full_kwd.add(full_key)
